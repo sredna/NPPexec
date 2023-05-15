@@ -128,17 +128,6 @@ INT_PTR CALLBACK ConsoleOutputFilterDlgProc( HWND   hDlg
         }
     }
 
-    else if ( uMessage == WM_SYSCOMMAND )
-    {
-        if ( wParam == SC_CLOSE )
-        {
-            ConsoleOutputFilterDlg.OnBtCancel();
-            ConsoleOutputFilterDlg.OnEndDialog();
-            EndDialog(hDlg, 0);
-            return 1;
-        }
-    }
-
     else if ( uMessage == WM_INITDIALOG )
     {
         ConsoleOutputFilterDlg.OnInitDialog(hDlg);

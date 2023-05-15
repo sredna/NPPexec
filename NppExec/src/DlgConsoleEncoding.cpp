@@ -62,15 +62,6 @@ INT_PTR CALLBACK ConsoleEncodingDlgProc(
         }
     }
 
-    else if (uMessage == WM_SYSCOMMAND)
-    {
-        if (wParam == SC_CLOSE)
-        {
-            EndDialog(hDlg, 0);
-            return 1;
-        }
-    }
-
     else if (uMessage == WM_INITDIALOG)
     {
         ConsoleEncodingDlg.OnInitDialog(hDlg);

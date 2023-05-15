@@ -72,15 +72,6 @@ INT_PTR CALLBACK HelpAboutDlgProc(
     }
   }
 
-  else if (uMessage == WM_SYSCOMMAND)
-  {
-    if (wParam == SC_CLOSE)
-    {
-      EndDialog(hDlg, 0);
-      return 1;
-    }
-  }
-
   else if (uMessage == WM_INITDIALOG)
   {
     CAnyWindow Wnd;

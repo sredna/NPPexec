@@ -134,22 +134,11 @@ INT_PTR CALLBACK AdvancedOptionsDlgProc(
             }
             case IDCANCEL:
             {
-                advOptDlg.OnBtCancel();
                 EndDialog(hDlg, 0);
                 return 1;
             }
             default:
                 break;
-        }
-    }
-
-    else if ( uMessage == WM_SYSCOMMAND )
-    {
-        if ( wParam == SC_CLOSE )
-        {
-            advOptDlg.OnBtCancel();
-            EndDialog(hDlg, 0);
-            return 1;
         }
     }
 
@@ -598,10 +587,6 @@ BOOL CAdvOptDlg::OnBtOK()
     }
 
     return TRUE;
-}
-
-void CAdvOptDlg::OnBtCancel()
-{
 }
 
 void CAdvOptDlg::OnBtItemNew()

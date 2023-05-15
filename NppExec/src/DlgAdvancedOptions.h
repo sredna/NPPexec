@@ -84,7 +84,6 @@ class CAdvOptDlg : public CAnyWindow
 
         void OnInitDlg(HWND hDlg);
         BOOL OnBtOK();
-        void OnBtCancel();
         void OnBtItemNew();
         void OnBtItemDelete();
         void OnBtMoveUp();

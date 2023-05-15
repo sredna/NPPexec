@@ -3180,9 +3180,11 @@ const TCHAR* ConsoleDlg::GetTitle()
 
 bool ConsoleDlg::EnableTransparency(bool bEnable)
 {
+#ifdef _WIN64
+    TRANSPARENCYFUNC lpTransparencyFunc = SetLayeredWindowAttributes;
+#else
     static bool bTransparencyFuncInitialized = false;
     static TRANSPARENCYFUNC lpTransparencyFunc = NULL;
-
     if ( !bTransparencyFuncInitialized )
     {
         HMODULE hUser32 = ::GetModuleHandle(_T("user32"));
@@ -3191,7 +3193,8 @@ bool ConsoleDlg::EnableTransparency(bool bEnable)
         
         bTransparencyFuncInitialized = true;
     }
-    
+#endif
+
     if ( lpTransparencyFunc && !IsDocked() )
     {
         HWND hDlg = NULL;

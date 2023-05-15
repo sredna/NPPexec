@@ -1672,23 +1672,25 @@ bool CProcessKiller::KillByConsoleCtrlEvent(unsigned int nCtrlEvent, unsigned in
     typedef BOOL (WINAPI * PFNATTCON)(DWORD);
 
     bool isKilled = false;
+    PFNATTCON pfnAttachConsole;
+#ifdef _WIN64
+    pfnAttachConsole = AttachConsole;
+#else
     HMODULE hKernel32 = ::GetModuleHandle(_T("kernel32"));
-    if ( hKernel32 )
+    pfnAttachConsole = (PFNATTCON) ::GetProcAddress(hKernel32, "AttachConsole");
+    if (pfnAttachConsole)
+#endif
     {
-        PFNATTCON pfnAttachConsole = (PFNATTCON) ::GetProcAddress(hKernel32, "AttachConsole");
-        if ( pfnAttachConsole )
+        if ( pfnAttachConsole(m_ProcInfo.dwProcessId) )
         {
-            if ( pfnAttachConsole(m_ProcInfo.dwProcessId) )
+            ::SetConsoleCtrlHandler(NULL, TRUE); // Disable Ctrl-C handling for our program
+            ::GenerateConsoleCtrlEvent(nCtrlEvent, m_ProcInfo.dwProcessId);
+            if ( ::WaitForSingleObject(m_ProcInfo.hProcess, nWaitTimeout) == WAIT_OBJECT_0 )
             {
-                ::SetConsoleCtrlHandler(NULL, TRUE); // Disable Ctrl-C handling for our program
-                ::GenerateConsoleCtrlEvent(nCtrlEvent, m_ProcInfo.dwProcessId);
-                if ( ::WaitForSingleObject(m_ProcInfo.hProcess, nWaitTimeout) == WAIT_OBJECT_0 )
-                {
-                    isKilled = true;
-                }
-                ::FreeConsole();
-                ::SetConsoleCtrlHandler(NULL, FALSE); // Re-enable Ctrl-C handling
+                isKilled = true;
             }
+            ::FreeConsole();
+            ::SetConsoleCtrlHandler(NULL, FALSE); // Re-enable Ctrl-C handling
         }
     }
     return isKilled;
@@ -1696,9 +1698,7 @@ bool CProcessKiller::KillByConsoleCtrlEvent(unsigned int nCtrlEvent, unsigned in
 
 bool CProcessKiller::IsProcessActive() const
 {
-    DWORD dwExitCode = (DWORD)(-1);;
-    ::GetExitCodeProcess(m_ProcInfo.hProcess, &dwExitCode);
-    return (dwExitCode == STILL_ACTIVE);
+    return ::WaitForSingleObject(m_ProcInfo.hProcess, 0) == WAIT_TIMEOUT;
 }
 
 /////////////////////////////////////////////////////////////////////////////
